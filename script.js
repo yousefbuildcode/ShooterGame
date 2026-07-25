@@ -29,7 +29,7 @@ document.addEventListener("keydown", function(e) {
 
 let bullets = [];
 let enemies = [];
-let particles = []; // تأثيرات تناثر الجسيمات
+let particles = [];
 let health = 100;
 let score = 0;
 
@@ -45,7 +45,7 @@ canvas.addEventListener("mousemove", (e) => {
     mouseY = e.clientY - rect.top;
 });
 
-// إنتاج أعداء
+// إنتاج الأعداء
 setInterval(() => {
     if (!stageComplete && health > 0) {
         enemies.push({
@@ -95,9 +95,9 @@ function drawPlayer() {
     let angle = Math.atan2(mouseY - (y + 15), mouseX - (x + 15));
 
     // ظل اللاعب
-    ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+    ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
     ctx.beginPath();
-    ctx.ellipse(x + 15, y + 45, 12, 5, 0, 0, Math.PI * 2);
+    ctx.ellipse(x + 15, y + 46, 14, 6, 0, 0, Math.PI * 2);
     ctx.fill();
 
     // الرأس
@@ -137,7 +137,7 @@ function drawPlayer() {
     ctx.moveTo(x + 18, y + 36); ctx.lineTo(x + 20, y + 46);
     ctx.stroke();
 
-    // المسدس
+    // المسدس المتحرك
     ctx.save();
     ctx.translate(x + 15, y + 24);
     ctx.rotate(angle);
@@ -153,14 +153,13 @@ function drawBullets() {
         b.x += b.dx;
         b.y += b.dy;
 
-        // توهج الرصاصة
         ctx.shadowBlur = 8;
         ctx.shadowColor = "#FFD700";
         ctx.fillStyle = "#FFF700";
         ctx.beginPath();
         ctx.arc(b.x, b.y, 4, 0, Math.PI * 2);
         ctx.fill();
-        ctx.shadowBlur = 0; // إعادة ضبط التوهج
+        ctx.shadowBlur = 0;
 
         if (b.x < 0 || b.x > canvas.width || b.y < 0 || b.y > canvas.height) {
             bullets.splice(i, 1);
@@ -168,7 +167,6 @@ function drawBullets() {
     }
 }
 
-// تأثير انفجار الدم عند القتل
 function createParticles(x, y) {
     for (let i = 0; i < 8; i++) {
         particles.push({
@@ -210,6 +208,12 @@ function drawEnemies() {
             enemy.y += (dy / distance) * enemy.speed;
         }
 
+        // ظل العدو
+        ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
+        ctx.beginPath();
+        ctx.ellipse(enemy.x, enemy.y + 28, 12, 5, 0, 0, Math.PI * 2);
+        ctx.fill();
+
         // رسم العدو
         ctx.fillStyle = "#5B8C32";
         ctx.fillRect(enemy.x - 8, enemy.y, 16, 18);
@@ -225,7 +229,7 @@ function drawEnemies() {
         ctx.arc(enemy.x + 3, enemy.y - 10, 2, 0, Math.PI * 2);
         ctx.fill();
 
-        // إصابة بالرصاص
+        // اصطدام الرصاص بالعدو
         for (let j = bullets.length - 1; j >= 0; j--) {
             let b = bullets[j];
             let bx = b.x - enemy.x;
@@ -245,20 +249,86 @@ function drawEnemies() {
     }
 }
 
+// رسم الخلفية كاملة مع الشجر والعشب والظلال
 function drawBackground() {
-    ctx.fillStyle = "#6EB5FF";
+    // السماء
+    ctx.fillStyle = "#7EC8FF";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.fillStyle = "#43A047";
+    // الأرض
+    ctx.fillStyle = "#4CAF50";
     ctx.fillRect(0, canvas.height - 140, canvas.width, 140);
+
+    // ظل خط الأرض
+    ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+    ctx.fillRect(0, canvas.height - 140, canvas.width, 8);
+
+    // عشب طويل
+    ctx.strokeStyle = "#2E7D32";
+    ctx.lineWidth = 2;
+    for (let i = 0; i < canvas.width; i += 8) {
+        let h = Math.random() * 8 + 6;
+        ctx.beginPath();
+        ctx.moveTo(i, canvas.height - 140);
+        ctx.lineTo(i + 2, canvas.height - 140 - h);
+        ctx.stroke();
+    }
+
+    // شمس
+    ctx.fillStyle = "#FFD54F";
+    ctx.beginPath();
+    ctx.arc(80, 80, 35, 0, Math.PI * 2);
+    ctx.fill();
+
+    // سحب
+    drawCloud(180, 70);
+    drawCloud(430, 100);
+    drawCloud(700, 60);
+
+    // الأشجار مع ظلالها
+    drawTree(120, canvas.height - 140);
+    drawTree(760, canvas.height - 140);
+}
+
+function drawCloud(x, y) {
+    ctx.fillStyle = "white";
+    ctx.beginPath();
+    ctx.arc(x, y, 20, 0, Math.PI * 2);
+    ctx.arc(x + 20, y - 10, 22, 0, Math.PI * 2);
+    ctx.arc(x + 45, y, 20, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function drawTree(x, y) {
+    // ظل الشجرة على الأرض
+    ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+    ctx.beginPath();
+    ctx.ellipse(x + 10, y + 2, 35, 10, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // الجذع
+    ctx.fillStyle = "#8D6E63";
+    ctx.fillRect(x, y - 60, 20, 60);
+
+    // أوراق الشجرة
+    ctx.fillStyle = "#2E8B57";
+    ctx.beginPath();
+    ctx.arc(x + 10, y - 80, 28, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(x - 10, y - 60, 24, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(x + 30, y - 60, 24, 0, Math.PI * 2);
+    ctx.fill();
 }
 
 function drawUI() {
-    // لوحة معلومات سوداء شفافة خلف البيانات
     ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
     ctx.fillRect(10, 10, 210, 130);
 
-    // شريط الصحة
     ctx.fillStyle = "#333";
     ctx.fillRect(20, 20, 190, 18);
     ctx.fillStyle = health > 30 ? "#4CAF50" : "#E53935";
