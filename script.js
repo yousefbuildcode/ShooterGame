@@ -11,8 +11,16 @@ let player = {
 };
 
 let keys = {};
-document.addEventListener("keydown", (e) => { keys[e.key.toLowerCase()] = true; });
-document.addEventListener("keyup", (e) => { keys[e.key.toLowerCase()] = false; });
+
+// تحسين التقاط الأزرار لدعم WASD و الأسهم
+document.addEventListener("keydown", (e) => { 
+    keys[e.key.toLowerCase()] = true; 
+    keys[e.code.toLowerCase()] = true; 
+});
+document.addEventListener("keyup", (e) => { 
+    keys[e.key.toLowerCase()] = false; 
+    keys[e.code.toLowerCase()] = false; 
+});
 
 document.addEventListener("keydown", function(e) {
     if (stageComplete && e.key === "Enter") {
@@ -77,11 +85,12 @@ canvas.addEventListener("click", (e) => {
     });
 });
 
+// دالة الحركة المعدلة لدعم WASD والأسهم بدقة
 function movePlayer() {
-    if (keys["w"] || keys["arrowup"]) player.y -= player.speed;
-    if (keys["s"] || keys["arrowdown"]) player.y += player.speed;
-    if (keys["a"] || keys["arrowleft"]) player.x -= player.speed;
-    if (keys["d"] || keys["arrowright"]) player.x += player.speed;
+    if (keys["w"] || keys["keyw"] || keys["arrowup"]) player.y -= player.speed;
+    if (keys["s"] || keys["keys"] || keys["arrowdown"]) player.y += player.speed;
+    if (keys["a"] || keys["keya"] || keys["arrowleft"]) player.x -= player.speed;
+    if (keys["d"] || keys["keyd"] || keys["arrowright"]) player.x += player.speed;
 
     if (player.x < 0) player.x = 0;
     if (player.y < 0) player.y = 0;
@@ -249,7 +258,6 @@ function drawEnemies() {
     }
 }
 
-// رسم الخلفية كاملة مع الشجر والعشب والظلال
 function drawBackground() {
     // السماء
     ctx.fillStyle = "#7EC8FF";
@@ -285,7 +293,7 @@ function drawBackground() {
     drawCloud(430, 100);
     drawCloud(700, 60);
 
-    // الأشجار مع ظلالها
+    // الأشجار
     drawTree(120, canvas.height - 140);
     drawTree(760, canvas.height - 140);
 }
@@ -300,17 +308,14 @@ function drawCloud(x, y) {
 }
 
 function drawTree(x, y) {
-    // ظل الشجرة على الأرض
     ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
     ctx.beginPath();
     ctx.ellipse(x + 10, y + 2, 35, 10, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // الجذع
     ctx.fillStyle = "#8D6E63";
     ctx.fillRect(x, y - 60, 20, 60);
 
-    // أوراق الشجرة
     ctx.fillStyle = "#2E8B57";
     ctx.beginPath();
     ctx.arc(x + 10, y - 80, 28, 0, Math.PI * 2);
