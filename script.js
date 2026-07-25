@@ -18,22 +18,7 @@ document.addEventListener("keydown", (e) => {
 document.addEventListener("keyup", (e) => {
     keys[e.key.toLowerCase()] = false;
 });
-document.addEventListener("keydown",function(e){
 
-    if(stageComplete && e.key==="Enter"){
-
-        stage++;
-        targetKills+=10;
-
-        health=100;
-
-        enemies=[];
-
-        stageComplete=false;
-
-    }
-
-});
 // الرصاص والأعداء
 let bullets = [];
 let enemies = [];
