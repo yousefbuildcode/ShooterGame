@@ -531,5 +531,20 @@ if(stageComplete){
     requestAnimationFrame(gameLoop);
 
 }
+document.addEventListener("keydown",function(e){
 
+    if(stageComplete && e.key==="Enter"){
+
+        stage++;
+        targetKills+=10;
+
+        health=100;
+
+        enemies=[];
+
+        stageComplete=false;
+
+    }
+
+});
 gameLoop();
