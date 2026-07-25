@@ -529,5 +529,5 @@ if(stageComplete){
     return;
 }
     requestAnimationFrame(gameLoop);
-
+};
 gameLoop();
