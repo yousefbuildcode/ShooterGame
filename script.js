@@ -24,6 +24,10 @@ let bullets = [];
 let enemies = [];
 let health = 100;
 let score = 0;
+
+let stage = 1;
+let targetKills = 50;
+let stageComplete = false;
 let mouseX = 0;
 let mouseY = 0;
 
@@ -376,7 +380,9 @@ function drawEnemies() {
                 enemies.splice(i, 1);
                 bullets.splice(j, 1);
                 score++;
-
+   if (score >= targetKills) {
+    stageComplete = true;
+}
                 break;
             }
         }
@@ -489,7 +495,9 @@ function gameLoop() {
     ctx.fillStyle="white";
     ctx.font="22px Arial";
     ctx.fillText("Score : "+score,20,70);
+ctx.fillText("Stage : " + stage, 20, 100);
 
+ctx.fillText("Target : " + score + " / " + targetKills, 20, 130);
     if(health<=0){
 
         ctx.fillStyle="rgba(0,0,0,0.7)";
@@ -505,7 +513,21 @@ function gameLoop() {
 
         return;
     }
+if(stageComplete){
 
+    ctx.fillStyle="rgba(0,0,0,0.75)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    ctx.fillStyle="gold";
+    ctx.font="55px Arial";
+    ctx.fillText("STAGE COMPLETE!",180,180);
+
+    ctx.fillStyle="white";
+    ctx.font="28px Arial";
+    ctx.fillText("Press ENTER",340,250);
+
+    return;
+}
     requestAnimationFrame(gameLoop);
 
 }
