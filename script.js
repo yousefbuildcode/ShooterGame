@@ -23,7 +23,23 @@ document.addEventListener("keyup", (e) => {
 
 // الرصاص
 let bullets = [];
+let enemies = [];
 
+setInterval(() => {
+
+    enemies.push({
+
+        x: Math.random() * canvas.width,
+
+        y: Math.random() * canvas.height,
+
+        size: 30,
+
+        speed: 2
+
+    });
+
+}, 1500);
 // إطلاق النار بالماوس
 canvas.addEventListener("click", (e) => {
 
@@ -79,7 +95,37 @@ function drawPlayer() {
 
 // رسم الرصاص
 function drawBullets() {
+function drawEnemies() {
 
+    ctx.fillStyle = "red";
+
+    for (let i = 0; i < enemies.length; i++) {
+
+        let enemy = enemies[i];
+
+        let dx = player.x - enemy.x;
+        let dy = player.y - enemy.y;
+
+        let distance = Math.sqrt(dx * dx + dy * dy);
+
+        enemy.x += dx / distance * enemy.speed;
+        enemy.y += dy / distance * enemy.speed;
+
+        ctx.beginPath();
+
+        ctx.arc(
+            enemy.x,
+            enemy.y,
+            enemy.size / 2,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+
+    }
+
+}
     ctx.fillStyle = "yellow";
 
     for (let i = 0; i < bullets.length; i++) {
@@ -113,7 +159,7 @@ function gameLoop() {
     drawPlayer();
 
     drawBullets();
-
+drawEnemies();
     requestAnimationFrame(gameLoop);
 
 }
